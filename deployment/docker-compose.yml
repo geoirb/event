@@ -1,0 +1,23 @@
+version: "2"
+services:
+    mongo:
+        image: mongo
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: event
+            MONGO_INITDB_ROOT_PASSWORD: event
+            MONGO_INITDB_DATABASE: event
+        volumes:
+            - event-storage:/data/db
+        ports:
+            - 27017:27017
+    
+    event:
+        context: ..
+        dockerfile: docker/event/Dockerfile
+        environment:
+            STORAGE_CONNECT:  mongodb://event:event@127.0.0.1:27017
+        ports: 
+            - 8080:8080
+
+volumes:
+    event-storage:

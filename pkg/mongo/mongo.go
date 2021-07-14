@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/geoirb/event/pkg/model"
+	"github.com/geoirb/event/pkg/service"
 )
 
 type builder interface {
@@ -63,5 +64,8 @@ func (m *Mongo) Update(ctx context.Context, e model.Event) error {
 	filter, update := m.builder.UpdateEvent(e)
 	_, err := m.collection.UpdateOne(ctx, filter, update)
 	if err == mongo.ErrNoDocuments {
+		// HOWDO
+		err = service.ErrNotFound
 	}
+	return err
 }
