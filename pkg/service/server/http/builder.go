@@ -1,6 +1,8 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/fasthttp/router"
 
 	"github.com/geoirb/event/pkg/service"
@@ -13,6 +15,7 @@ const (
 	finishURI = version + "/finish"
 )
 
-func Route(router *router.Router, svc service.Event) {
-
+func Routing(router *router.Router, svc service.Event) {
+	router.Handle(http.MethodPost, startURI, newStartHandler(svc, NewStartTransport()))
+	router.Handle(http.MethodPost, startURI, newStartHandler(svc, NewFinishTransport()))
 }

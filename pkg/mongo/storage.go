@@ -17,16 +17,16 @@ type builder interface {
 	UpdateEvent(e model.Event) (filter bson.M, update bson.M)
 }
 
-type Mongo struct {
+type Storage struct {
 	collection *mongo.Collection
 	builder    builder
 }
 
-func NewMongo(
+func NewStorage(
 	ctx context.Context,
 	connStr, databaseName, collectionName string,
 	builder builder,
-) (*Mongo, error) {
+) (*Storage, error) {
 	opts := options.Client().ApplyURI(connStr)
 	connect, err := mongo.Connect(ctx, opts)
 	if err != nil {
@@ -45,13 +45,13 @@ func NewMongo(
 		return nil, err
 	}
 
-	return &Mongo{
+	return &Storage{
 		collection: collection,
 		builder:    builder,
 	}, err
 }
 
-func (m *Mongo) Create(ctx context.Context, e model.Event) error {
+func (m *Storage) Create(ctx context.Context, e model.Event) error {
 	event := m.builder.NewEvent(e)
 	_, err := m.collection.InsertOne(ctx, event)
 	if err == mongo.ErrInvalidIndexValue {
@@ -60,7 +60,7 @@ func (m *Mongo) Create(ctx context.Context, e model.Event) error {
 	return err
 }
 
-func (m *Mongo) Update(ctx context.Context, e model.Event) error {
+func (m *Storage) Update(ctx context.Context, e model.Event) error {
 	filter, update := m.builder.UpdateEvent(e)
 	_, err := m.collection.UpdateOne(ctx, filter, update)
 	if err == mongo.ErrNoDocuments {

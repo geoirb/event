@@ -10,7 +10,7 @@ import (
 )
 
 type verificator interface {
-	EventType(t string) bool
+	Type(t string) bool
 }
 
 type eventStorage interface {
@@ -52,7 +52,7 @@ func NewEvent(
 func (s *service) Start(ctx context.Context, r StartEvent) (err error) {
 	logger := log.WithPrefix(s.logger, "method", "Start")
 
-	if !s.verificator.EventType(r.Type) {
+	if !s.verificator.Type(r.Type) {
 		err = ErrWrongFormatEventType
 		level.Error(logger).Log("err", err)
 		return
