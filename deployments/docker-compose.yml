@@ -12,10 +12,9 @@ services:
             - 27017:27017
     
     event:
-        context: ..
-        dockerfile: docker/event/Dockerfile
-        environment:
-            STORAGE_CONNECT:  mongodb://event:event@127.0.0.1:27017
+        build:
+            context: ..
+            dockerfile: docker/event/Dockerfile
         ports: 
             - 8080:8080
 

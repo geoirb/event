@@ -47,6 +47,6 @@ func (t *finishEventTransport) EncodeResponse(r *fasthttp.Response, err error) {
 	r.SetStatusCode(code)
 }
 
-func NewFinishTransport() *startEventTransport {
-	return &startEventTransport{}
+func NewFinishTransport() *finishEventTransport {
+	return &finishEventTransport{}
 }

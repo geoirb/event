@@ -29,8 +29,11 @@ func (b *Builder) UpdateEvent(e model.Event) (filter bson.M, update bson.M) {
 	filter, update = make(primitive.M), make(primitive.M)
 
 	filter["type"] = e.Type
+	filter["state"] = int64(model.Unfinished)
 
-	update["finished_at"] = e.FinishedAt
-	update["state"] = e.State
+	set := make(primitive.M)
+	set["finished_at"] = e.FinishedAt
+	set["state"] = e.State
+	update["$set"] = set
 	return
 }

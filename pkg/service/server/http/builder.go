@@ -17,5 +17,5 @@ const (
 
 func Routing(router *router.Router, svc service.Event) {
 	router.Handle(http.MethodPost, startURI, newStartHandler(svc, NewStartTransport()))
-	router.Handle(http.MethodPost, startURI, newStartHandler(svc, NewFinishTransport()))
+	router.Handle(http.MethodPost, finishURI, newFinishHandler(svc, NewFinishTransport()))
 }

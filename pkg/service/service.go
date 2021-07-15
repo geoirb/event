@@ -54,7 +54,7 @@ func (s *service) Start(ctx context.Context, r StartEvent) (err error) {
 
 	if !s.verificator.Type(r.Type) {
 		err = ErrWrongFormatEventType
-		level.Error(logger).Log("err", err)
+		level.Error(logger).Log("type", r.Type, "err", err)
 		return
 	}
 
@@ -70,7 +70,7 @@ func (s *service) Finish(ctx context.Context, r FinishEvent) (err error) {
 	logger := log.WithPrefix(s.logger, "method", "Finish")
 
 	e := s.builder.NewFinishedEvent(r.Type)
-	if err = s.storage.Create(ctx, e); err != nil {
+	if err = s.storage.Update(ctx, e); err != nil {
 		level.Error(logger).Log("msg", "event create in storage", "err", err)
 	}
 	return

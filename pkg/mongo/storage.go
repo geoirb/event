@@ -54,7 +54,7 @@ func NewStorage(
 func (m *Storage) Create(ctx context.Context, e model.Event) error {
 	event := m.builder.NewEvent(e)
 	_, err := m.collection.InsertOne(ctx, event)
-	if err == mongo.ErrInvalidIndexValue {
+	if mongo.IsDuplicateKeyError(err) {
 		err = nil
 	}
 	return err
@@ -62,9 +62,8 @@ func (m *Storage) Create(ctx context.Context, e model.Event) error {
 
 func (m *Storage) Update(ctx context.Context, e model.Event) error {
 	filter, update := m.builder.UpdateEvent(e)
-	_, err := m.collection.UpdateOne(ctx, filter, update)
-	if err == mongo.ErrNoDocuments {
-		// HOWDO
+	res, err := m.collection.UpdateOne(ctx, filter, update)
+	if res.MatchedCount == 0 {
 		err = service.ErrNotFound
 	}
 	return err

@@ -47,6 +47,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	level.Error(logger).Log("msg", "initialization")
+
 	verificator, err := verificator.NewEvent(
 		cfg.TypeLayout,
 	)
@@ -90,6 +92,14 @@ func main() {
 		Handler:          router.Handler,
 		DisableKeepalive: true,
 	}
+
+	go func() {
+		level.Info(logger).Log("msg", "http server turn on", "port", cfg.HttpPort)
+		if err := httpServer.ListenAndServe(":" + cfg.HttpPort); err != nil {
+			level.Error(logger).Log("msg", "http server turn on", "err", err)
+			os.Exit(1)
+		}
+	}()
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
